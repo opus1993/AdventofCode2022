@@ -49,3 +49,25 @@ for (i in 1:nrow(dataframe)) {
 dataframe |>
   inner_join(tibble(group_id = c(letters, str_to_upper(letters)) , priority =  1:52)) |>
   summarise(sum = sum(priority))
+
+
+### David Robinson's work
+
+raw |>
+  mutate(first = map2_chr(value, str_length(value) / 2, ~ str_sub(.x, 1, .y)),
+         second = map2_chr(value, str_length(value) / 2, ~ str_sub(.x, .y + 1))) |>
+  mutate(first = str_split(first, ""),
+         second = str_split(second, "")) |>
+  mutate(intersect = map2_chr(first, second, intersect)) |>
+  summarize(result = sum(match(intersect, c(letters,LETTERS))))
+
+raw |>
+  mutate(spl = str_split(value, "")) |>
+  group_by(g = (row_number() - 1) %/% 3 ) |>
+  summarize(intersect = reduce(spl, intersect)) |>
+  summarize(result = sum(match(intersect, c(letters, LETTERS))))
+
+
+
+
+
